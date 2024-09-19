@@ -1,0 +1,113 @@
+---
+title: "p1805_hw1_yc4588"
+author: "Yining Cao"
+date: "2024-09-19"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem1
+
+## Load the penguins dataset
+
+```{r}
+data("penguins", package = "palmerpenguins")
+summary(penguins)
+nrow(penguins) # the number of rows
+ncol(penguins) # the number of columns
+```
+
+* The main variables in the dataset include: 
+1. _species_: The species of the penguins, including Adelie(152), Chinstrap(68) and Gentoo(124). 
+1. _island_: The islands inhabited by penguins are Biscoe(168), Dream(124) and Torgersen(52). 
+1. _bill_length_mm_: The length of the penguin's bill in millimeters(32.10-59.60). 
+1. _bill_depth_mm_: The depth of the penguin's bill in millimeters(13.10-21.50). 
+1. _flipper_length_mm_: The length of the penguin's flippers in millimeters(172.0-231.0). 
+1. _body_mass_g_: The body mass of the penguins in grams(2700-6300).
+1. _year_: The year of the penguins, including 2007, 2008 and 2009. 
+1. _sex_: The sex of the penguins, including 165 female penguins and 168 male penguins.
+* This dataset contains `r nrow(penguins)` rows and `r ncol(penguins)` columns. 
+* The mean flipper length for the penguins is `r round(mean(penguins$flipper_length_mm, na.rm = TRUE), digits = 2)` mm.
+
+## Scatterplot of flipper Length(mm) vs bill Length(mm) for penguins
+
+```{r}
+library(ggplot2)
+p1 = ggplot(na.omit(penguins), aes(x = bill_length_mm, y = flipper_length_mm, color = species)) +
+  geom_point() +  
+  scale_color_manual(values = c("Adelie" = "#CD9B9B", "Chinstrap" = "#8DB6CD", "Gentoo" = "#8FBC8F")) +
+  labs(title = "Flipper Length vs Bill Length",
+       x = "Bill Length (mm)",
+       y = "Flipper Length (mm)") +
+  theme_minimal()
+p1
+
+ggsave(filename = "penguins_scatterplot.png", plot = p1, width = 10, height = 7, dpi = 300)
+```
+
+* The scatterplot shows the relationship between bill length and flipper length of penguins from different islands.
+* Gentoo penguins generally have longer flippers, while Chinstrap and Adelie penguins have shorter bill and flipper lengths.
+
+# Problem2
+
+## Create a data frame
+
+```{r}
+library(tibble)
+set.seed(123)
+df <- tibble(
+  number = rnorm(10),
+  logical_vector = rnorm(10) > 0,
+  character_vector = sample(c("A", "B", "C", "D", "E"), 10, replace = TRUE),
+  factor_vector = factor(sample(c("Level1", "Level2", "Level3"), 10, replace = TRUE))
+)
+```
+
+## Calculate the mean of the number column
+
+```{r}
+library(dplyr)
+number_mean = df %>% 
+  pull(number) %>%
+  mean()
+number_mean
+```
+```{r}
+logical_vector_mean = df %>% 
+  pull(logical_vector) %>%
+  mean()
+logical_vector_mean
+```
+
+```{r}
+character_vector_mean = df %>% 
+  pull(character_vector) %>%
+  mean()
+character_vector_mean
+```
+
+```{r}
+factor_vector_mean = df %>% 
+  pull(factor_vector) %>%
+  mean()
+factor_vector_mean
+```
+* Means can be calculated for numeric and logical variables.
+* Factor and character variables cannot be averaged.
+
+## Convert variables to numeric
+
+```{r  eval = FALSE}
+logical_vector = as.numeric(df$logical_vector)
+character_vector = as.numeric(df$character_vector)
+factor_vector = as.numeric(df$factor_vector)
+```
+* NA values were introduced due to characters can not be converted to numeric, so characters can not take the mean.
+* Factor variable can be converted to numeric without any warning, level1 is converted to 1, level2 is converted to 2, and level3 is converted to 3 so that it can be used in the calculation.
+
